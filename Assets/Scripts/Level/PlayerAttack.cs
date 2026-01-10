@@ -1,21 +1,27 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class PlayerAttack : MonoBehaviour
 {
     public InputActionAsset inputActions;
-    public LayerMask enemyLayer;
+    public Transform weapon;
 
-    public int attackDamage = 25;
-    public float attackRadius = 2.5f;
+    public float attackDuration = 0.25f;
+    public float attackCooldown = 0.4f;
 
     InputAction attackAction;
+    bool canAttack = true;
+
+    Weapon weaponScript;
+
+    Quaternion defaultWeaponRotation;
+    Coroutine attackCoroutine;
 
     void OnEnable()
     {
         var playerMap = inputActions.FindActionMap("Player");
         attackAction = playerMap.FindAction("Attack");
-
         attackAction.Enable();
     }
 
@@ -24,40 +30,57 @@ public class PlayerAttack : MonoBehaviour
         attackAction.Disable();
     }
 
+    void Start()
+    {
+        weaponScript = weapon.GetComponent<Weapon>();
+
+        // SIMPAN ROTASI AWAL
+        defaultWeaponRotation = weapon.localRotation;
+    }
+
     void Update()
     {
-        if (attackAction.WasPressedThisFrame())
+        if (attackAction.WasPressedThisFrame() && canAttack)
         {
-            Debug.Log("ATTACK J DITEKAN");
-            Attack();
+            if (attackCoroutine != null)
+                StopCoroutine(attackCoroutine);
+
+            attackCoroutine = StartCoroutine(AttackRoutine());
         }
     }
 
-    void Attack()
+    IEnumerator AttackRoutine()
     {
-        Collider[] hits = Physics.OverlapSphere(
-    transform.position,
-    attackRadius,
-    enemyLayer
+        canAttack = false;
 
-);
+        Debug.Log("[PlayerAttack] ATTACK START");
 
+        weapon.localRotation = defaultWeaponRotation;
 
-        Debug.Log("Enemy kena overlap: " + hits.Length);
+        Quaternion attackRotation = defaultWeaponRotation * Quaternion.Euler(0, 90f, 0);
 
-        foreach (Collider hit in hits)
+        weaponScript.EnableHit();
+
+        float t = 0f;
+        while (t < attackDuration)
         {
-            EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(attackDamage);
-            }
+            t += Time.deltaTime;
+            weapon.localRotation = Quaternion.Slerp(
+                defaultWeaponRotation,
+                attackRotation,
+                t / attackDuration
+            );
+            yield return null;
         }
-    }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position + transform.forward, attackRadius);
+        // RESET TOTAL (INI KUNCI)
+        weapon.localRotation = defaultWeaponRotation;
+        weaponScript.DisableHit();
+
+        Debug.Log("[PlayerAttack] ATTACK END");
+
+        yield return new WaitForSeconds(attackCooldown);
+        canAttack = true;
+        Debug.Log("[PlayerAttack] READY AGAIN");
     }
 }
