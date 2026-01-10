@@ -5,40 +5,71 @@ public class EnemyChase : MonoBehaviour
     public float moveSpeed = 3f;
     public float stopDistance = 1.5f;
 
+    [Header("Separation")]
+    public float separationRadius = 1.2f;
+    public float separationStrength = 2.5f;
+    public LayerMask enemyLayer;
+
     Transform player;
     Rigidbody rb;
-    bool isDead = false;
-
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-    }
 
     void Start()
     {
-        GameObject p = GameObject.FindWithTag("Player");
-        if (p != null)
-            player = p.transform;
-    }
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-    public void SetDead()
-    {
-        isDead = true;
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null)
+            player = playerObj.transform;
     }
 
     void FixedUpdate()
     {
-        if (isDead || player == null) return;
+        if (player == null) return;
 
-        Vector3 dir = player.position - transform.position;
-        dir.y = 0f;
+        Vector3 dirToPlayer = player.position - transform.position;
+        dirToPlayer.y = 0f;
 
-        if (dir.magnitude <= stopDistance) return;
+        float dist = dirToPlayer.magnitude;
+        if (dist <= stopDistance) return;
 
-        Vector3 nextPos = rb.position + dir.normalized * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(nextPos);
+        Vector3 moveDir = dirToPlayer.normalized;
 
-        rb.rotation = Quaternion.LookRotation(dir);
+        // 🔴 SEPARATION
+        Collider[] nearbyEnemies = Physics.OverlapSphere(
+            transform.position,
+            separationRadius,
+            enemyLayer
+        );
+
+        Vector3 separationDir = Vector3.zero;
+
+        foreach (Collider c in nearbyEnemies)
+        {
+            if (c.gameObject == gameObject) continue;
+
+            Vector3 diff = transform.position - c.transform.position;
+            diff.y = 0f;
+
+            if (diff.magnitude > 0.01f)
+                separationDir += diff.normalized / diff.magnitude;
+        }
+
+        Vector3 finalDir =
+            moveDir +
+            separationDir * separationStrength;
+
+        rb.MovePosition(
+            rb.position +
+            finalDir.normalized * moveSpeed * Time.fixedDeltaTime
+        );
+
+        transform.forward = moveDir;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, separationRadius);
     }
 }

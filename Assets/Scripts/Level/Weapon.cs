@@ -3,22 +3,13 @@
 public class Weapon : MonoBehaviour
 {
     public int damage = 25;
+
     Collider col;
 
     void Awake()
     {
         col = GetComponent<Collider>();
-
-        if (col == null)
-        {
-            Debug.LogError("[Weapon] COLLIDER TIDAK ADA!");
-            return;
-        }
-
-        col.isTrigger = true;
         col.enabled = false;
-
-        Debug.Log("[Weapon] Collider ditemukan & DISABLE");
     }
 
     public void EnableHit()
@@ -33,9 +24,9 @@ public class Weapon : MonoBehaviour
         Debug.Log("[Weapon] HIT DISABLED");
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        Debug.Log("[Weapon] KENA: " + other.name);
+        if (!col.enabled) return;
 
         if (other.CompareTag("Enemy"))
         {
@@ -43,11 +34,7 @@ public class Weapon : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
-                Debug.Log("[Weapon] DAMAGE MASUK: " + damage);
-            }
-            else
-            {
-                Debug.Log("[Weapon] EnemyHealth TIDAK ADA");
+                Debug.Log("SWORD HIT ENEMY");
             }
         }
     }

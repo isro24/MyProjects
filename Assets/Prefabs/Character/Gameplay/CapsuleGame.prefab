@@ -236,9 +236,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   inputActions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
-  weapon: {fileID: 7491067442316205033}
+  handR: {fileID: 7872377044750794335}
+  weaponScript: {fileID: 1164336082607323463}
   attackDuration: 0.25
   attackCooldown: 0.4
+  swingAngle: 180
 --- !u!114 &-7254523860777154874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,7 +279,7 @@ Transform:
   m_GameObject: {fileID: 5636561550651487304}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -442,23 +444,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.7071068
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -466,7 +468,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 5836862077211950886, guid: 56725b73f659e0a47a543352bf563a1e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -520,7 +522,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 0.25, z: 1.2}
+  m_Size: {x: 0.5, y: 5, z: 1.2}
   m_Center: {x: 0, y: 0, z: 0.6}
 --- !u!4 &7491067442316205033 stripped
 Transform:

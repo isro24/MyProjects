@@ -22,6 +22,12 @@ public class EnemyHealth : MonoBehaviour
             Die();
     }
 
+    public bool IsLowHP()
+    {
+        return currentHP <= maxHP * 0.3f;
+    }
+
+
     void Die()
     {
         if (enemyAttack != null && EnemyAttackManager.instance != null)

@@ -3,30 +3,35 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
+    [Header("Attack Stats")]
     public int damage = 10;
     public float attackCooldown = 2f;
     public float attackRange = 1.5f;
-    public float requestDelay = 1.0f; // ⬅ delay sebelum boleh request
+    public float requestDelay = 1.0f;
 
+    [Header("Visual & Audio")]
     public GameObject attackIndicator;
     public AudioSource attackAudio;
 
     PlayerHealth player;
     bool isAttacking;
-    bool canRequest = false;
+    bool canRequest;
+
+    EnemyAttackManager manager;
 
     void Start()
     {
         player = FindFirstObjectByType<PlayerHealth>();
+        manager = EnemyAttackManager.instance;
 
-        attackAudio = GetComponent<AudioSource>(); // ⬅ WAJIB
+        if (attackAudio == null)
+            attackAudio = GetComponent<AudioSource>();
 
         if (attackIndicator != null)
             attackIndicator.SetActive(false);
 
         StartCoroutine(EnableRequestAfterDelay());
     }
-
 
     IEnumerator EnableRequestAfterDelay()
     {
@@ -39,29 +44,49 @@ public class EnemyAttack : MonoBehaviour
         if (!canRequest || isAttacking || player == null) return;
 
         float dist = Vector3.Distance(transform.position, player.transform.position);
-
         if (dist <= attackRange)
         {
-            TryRequestAttack();
+            TryAttack();
         }
     }
 
-    void TryRequestAttack()
+    // =========================
+    // DIPANGGIL OLEH EnemyAI
+    // =========================
+    public void TryAttack()
     {
-        // ❗ request hanya SEKALI sampai selesai attack
+        if (!canRequest || isAttacking) return;
+
         canRequest = false;
 
-        if (EnemyAttackManager.instance.RequestAttack(this))
+        if (manager.RequestAttack(this))
         {
             StartCoroutine(AttackRoutine());
         }
         else
         {
-            // gagal → coba lagi nanti
+            // gagal → antri ulang
             StartCoroutine(EnableRequestAfterDelay());
         }
     }
 
+    public void StopAttack()
+    {
+        if (!isAttacking) return;
+
+        StopAllCoroutines();
+        isAttacking = false;
+
+        if (attackIndicator != null)
+            attackIndicator.SetActive(false);
+
+        manager.FinishAttack(this);
+        StartCoroutine(EnableRequestAfterDelay());
+    }
+
+    // =========================
+    // ATTACK LOGIC ASLI
+    // =========================
     IEnumerator AttackRoutine()
     {
         isAttacking = true;
@@ -69,7 +94,7 @@ public class EnemyAttack : MonoBehaviour
         if (attackIndicator != null)
             attackIndicator.SetActive(true);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f); // wind-up
 
         if (attackAudio != null)
             attackAudio.Play();
@@ -82,11 +107,15 @@ public class EnemyAttack : MonoBehaviour
         if (attackIndicator != null)
             attackIndicator.SetActive(false);
 
-        EnemyAttackManager.instance.FinishAttack(this);
+        manager.FinishAttack(this);
 
         isAttacking = false;
-
-        // ⏱ setelah attack selesai, baru boleh request lagi
         StartCoroutine(EnableRequestAfterDelay());
+    }
+
+    void OnDestroy()
+    {
+        if (manager != null)
+            manager.FinishAttack(this);
     }
 }

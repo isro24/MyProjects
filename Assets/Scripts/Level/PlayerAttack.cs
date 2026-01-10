@@ -1,21 +1,25 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 
 public class PlayerAttack : MonoBehaviour
 {
     public InputActionAsset inputActions;
-    public Transform weapon;
 
+    [Header("Reference")]
+    public Transform handR;        // ⬅ GANTI dari weapon → Hand_R
+    public Weapon weaponScript;    // ⬅ drag Sword (Weapon.cs)
+
+    [Header("Attack Settings")]
     public float attackDuration = 0.25f;
     public float attackCooldown = 0.4f;
+    public float swingAngle = 180f;
 
     InputAction attackAction;
     bool canAttack = true;
+    bool swingRight = true;
 
-    Weapon weaponScript;
-
-    Quaternion defaultWeaponRotation;
+    Quaternion defaultHandRotation;
     Coroutine attackCoroutine;
 
     void OnEnable()
@@ -32,10 +36,8 @@ public class PlayerAttack : MonoBehaviour
 
     void Start()
     {
-        weaponScript = weapon.GetComponent<Weapon>();
-
-        // SIMPAN ROTASI AWAL
-        defaultWeaponRotation = weapon.localRotation;
+        // SIMPAN ROTASI AWAL TANGAN
+        defaultHandRotation = handR.localRotation;
     }
 
     void Update()
@@ -53,34 +55,40 @@ public class PlayerAttack : MonoBehaviour
     {
         canAttack = false;
 
-        Debug.Log("[PlayerAttack] ATTACK START");
+        // arah swing (kiri / kanan)
+        float dir = swingRight ? 1f : -1f;
+        swingRight = !swingRight;
 
-        weapon.localRotation = defaultWeaponRotation;
+        Quaternion from = defaultHandRotation *
+            Quaternion.Euler(0, -swingAngle / 2f * dir, 0);
 
-        Quaternion attackRotation = defaultWeaponRotation * Quaternion.Euler(0, 90f, 0);
+        Quaternion to = defaultHandRotation *
+            Quaternion.Euler(0, swingAngle / 2f * dir, 0);
 
+        handR.localRotation = from;
+
+        // AKTIFKAN DAMAGE
         weaponScript.EnableHit();
 
         float t = 0f;
         while (t < attackDuration)
         {
             t += Time.deltaTime;
-            weapon.localRotation = Quaternion.Slerp(
-                defaultWeaponRotation,
-                attackRotation,
-                t / attackDuration
-            );
+            handR.localRotation = Quaternion.Slerp(from, to, t / attackDuration);
             yield return null;
         }
 
-        // RESET TOTAL (INI KUNCI)
-        weapon.localRotation = defaultWeaponRotation;
+        // RESET POSISI (INI YANG HILANG DI CODE LAMA)
         weaponScript.DisableHit();
-
-        Debug.Log("[PlayerAttack] ATTACK END");
+        handR.localRotation = defaultHandRotation;
 
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
-        Debug.Log("[PlayerAttack] READY AGAIN");
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * 2f);
     }
 }

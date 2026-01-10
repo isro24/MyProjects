@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -34,12 +34,21 @@ public class EnemySpawner : MonoBehaviour
                         Random.Range(-spawnRadius, spawnRadius)
                     );
 
-                Instantiate(enemyPrefab, pos, Quaternion.identity);
+                GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.identity);
+
+                // ===============================
+                // 🔴 TAMBAHAN PENTING (ANTI NUMPuk)
+                // ===============================
+                EnemyAI ai = enemy.GetComponent<EnemyAI>();
+                if (ai != null)
+                {
+                    ai.formationIndex = spawnedCount % ai.formationTotal;
+                }
+
+                spawnedCount++;
             }
 
-            spawnedCount += spawnThisWave;
-            currentWaveAmount *= 2;   // berlipat dua
-
+            currentWaveAmount *= 2;   // wave berlipat dua
             yield return new WaitForSeconds(spawnInterval);
         }
     }
