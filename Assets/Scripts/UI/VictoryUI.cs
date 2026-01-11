@@ -1,27 +1,30 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class VictoryTrigger : MonoBehaviour
+public class VictoryUI : MonoBehaviour
 {
-    [Header("UI Reference")]
-    public GameObject victoryUI; 
+    [Header("Target & UI")]
+    public GameObject bossObject; 
+    public GameObject victoryUI;  
 
-    void OnTriggerEnter(Collider other)
+    private bool hasWon = false;
+
+    void Update()
     {
-        if (other.CompareTag("Player"))
+        if (bossObject == null && !hasWon)
         {
             WinGame();
         }
     }
 
-    // Logic Menang
-    public void WinGame()
+    void WinGame()
     {
-        if (victoryUI != null)
-            victoryUI.SetActive(true);
+        hasWon = true;
 
-        Time.timeScale = 0f; 
-        Cursor.visible = true; 
+        if (victoryUI != null) victoryUI.SetActive(true);
+
+        Time.timeScale = 0f;
+        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
