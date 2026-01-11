@@ -3,56 +3,51 @@
 public class BossChase : MonoBehaviour
 {
     public float moveSpeed = 1.5f;
-    public float stopDistance = 2.2f;
+    public float stopDistance = 2.5f;
 
-    Transform playerTransform;
+    Transform player;
     Rigidbody rb;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.sleepThreshold = 0.0f;
 
-        if (GameManager.instance != null) GameManager.instance.ResetGame();
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
     void FixedUpdate()
     {
-        if (GameManager.instance != null && GameManager.instance.isGameOver)
-        {
-            rb.linearVelocity = Vector3.zero;
-            return;
-        }
-
-        if (playerTransform == null)
+        // 🔍 Cari player terus sampai ketemu
+        if (player == null)
         {
             PlayerHealth ph = FindFirstObjectByType<PlayerHealth>();
 
             if (ph != null)
             {
-                playerTransform = ph.transform;
-                Debug.Log("✅ BossChase: Target Terkunci -> " + ph.name);
+                player = ph.transform;
+                Debug.Log("✅ BossChase: Player ditemukan -> " + ph.name);
             }
             else
             {
-                return; // Kalau belum ketemu, jangan gerak dulu
+                return; // belum ada player
             }
         }
 
-        float dist = Vector3.Distance(transform.position, playerTransform.position);
+        Vector3 dir = player.position - transform.position;
+        dir.y = 0f;
 
-        if (dist <= stopDistance) return;
+        float dist = dir.magnitude;
 
-        Vector3 dir = (playerTransform.position - transform.position).normalized;
-
-        dir.y = 0;
-
-        Vector3 move = dir * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(rb.position + move);
-
-        if (dir != Vector3.zero)
+        if (dist <= stopDistance)
         {
-            transform.forward = dir;
+            if (dir != Vector3.zero)
+                transform.forward = dir.normalized;
+            return;
         }
+
+        Vector3 move = dir.normalized * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + move);
+        transform.forward = dir.normalized;
     }
 }

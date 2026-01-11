@@ -19,11 +19,11 @@ GameObject:
   - component: {fileID: 7600072491609999646}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Boss
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2040881349180002326
 Transform:
   m_ObjectHideFlags: 0
