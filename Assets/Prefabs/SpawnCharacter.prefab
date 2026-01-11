@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnCharacter
   characterPrefabs:
-  - {fileID: 224892489802432448, guid: 46242079330b6084a9fdeb48b899fd89, type: 3}
-  - {fileID: 741102615495376783, guid: 1bcbd8f3474496b41a264e2e3a1b0cfb, type: 3}
   - {fileID: 4484509914755186536, guid: 51d44d0ad6bbd55438178125497ca044, type: 3}
+  - {fileID: 1692468126580653705, guid: 6dc398470dce3134db64df19a6bf9571, type: 3}
   spawnPoint: {fileID: 0}

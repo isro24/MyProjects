@@ -105,8 +105,8 @@ GameObject:
   - component: {fileID: -5239488897728471497}
   - component: {fileID: 1709192740377708442}
   - component: {fileID: 3946535490341080515}
-  - component: {fileID: -1513945603956519511}
   - component: {fileID: 7834248680759125054}
+  - component: {fileID: 3685433250371346993}
   m_Layer: 3
   m_Name: Enemy
   m_TagString: Enemy
@@ -367,29 +367,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-1513945603956519511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3747584991554270733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 861dfa80eccce3d4d957a4ebf1160942, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  moveSpeed: 2
-  stopDistance: 1.5
-  formationIndex: 0
-  formationTotal: 6
-  circleRadius: 2.5
-  lowHPPercent: 0.3
-  separationRadius: 1.2
-  separationStrength: 2.5
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &7834248680759125054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,6 +386,26 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &3685433250371346993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3747584991554270733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a57d797fcf0cb47a9012288fd03284, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  chaseDistance: 8
+  stopDistance: 1.5
+  moveSpeed: 2
+  fleeDistance: 10
+  lowHPPercent: 0.3
+  formationIndex: 0
+  formationTotal: 6
+  circleRadius: 2.5
 --- !u!1 &5765114582538759776
 GameObject:
   m_ObjectHideFlags: 0
