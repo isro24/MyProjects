@@ -815,7 +815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
   damage: 0
-  attackCooldown: 2
+  attackCooldown: 1
   attackRange: 1.5
   requestDelay: 1
   attackIndicator: {fileID: 0}

@@ -2,7 +2,7 @@
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHP = 5;
+    public int maxHP = 100;
     int currentHP;
 
     public int CurrentHP => currentHP;

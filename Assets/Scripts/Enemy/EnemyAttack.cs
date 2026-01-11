@@ -5,7 +5,7 @@ public class EnemyAttack : MonoBehaviour
 {
     [Header("Attack Stats")]
     public int damage;
-    public float attackCooldown = 2f;
+    public float attackCooldown = 1f;
     public float attackRange = 1.5f;
     public float requestDelay = 1.0f;
 
